@@ -10,8 +10,11 @@ import SwiftUI
 @main
 struct Tips_ListApp: App {
     var body: some Scene {
+        
+        let obs = observer()
         WindowGroup {
             ContentView()
+                .environmentObject(obs)
         }
     }
 }

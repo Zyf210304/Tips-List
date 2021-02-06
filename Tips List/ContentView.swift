@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     
     @State var edit = false
+    @EnvironmentObject var obs : observer
+    @State var selected : type = .init(id: "", title: "", msg: "", time: "", day: "")
     
     var body: some View {
         
@@ -46,7 +48,21 @@ struct ContentView: View {
                 }
                 .background(Rounded().fill(Color.white))
                 
-                Spacer()
+                ScrollView(.vertical, showsIndicators: false, content: {
+                    
+                    VStack(spacing: 10, content: {
+                        
+                        ForEach(self.obs.datas) { item in
+                            
+                            cellView(edit: edit, data: selected)
+                                .onTapGesture {
+                                    
+                                    self.selected = item
+                                }
+                        }
+                    })
+                    .foregroundColor(.white)
+                })
             }
         }
     }
@@ -67,4 +83,52 @@ struct Rounded : Shape {
         
         return Path(path.cgPath)
     }
+}
+
+struct cellView : View {
+    
+    var edit : Bool
+    var data : type
+    var body: some View {
+        
+        HStack {
+            
+            if edit {
+                
+                Button(action: {}, label: {
+                    
+                    Image(systemName: "minus.circle")
+                        .font(.title)
+                        .foregroundColor(Color.red)
+                })
+            }
+            
+            Text(data.title).lineLimit(1)
+            
+            Spacer()
+            
+            VStack(spacing: 5) {
+                
+                Text(data.day).lineLimit(1)
+                Text(data.time).lineLimit(1)
+            }
+        }
+    }
+}
+
+
+struct type : Identifiable {
+    
+    var id : String
+    var title : String
+    var msg : String
+    var time : String
+    var day : String
+}
+
+
+class observer: ObservableObject {
+    
+    @Published var datas = [type]()
+    
 }
