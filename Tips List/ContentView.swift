@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @State var edit = false
+    @State var show = false
     @EnvironmentObject var obs : observer
     @State var selected : type = .init(id: "", title: "", msg: "", time: "", day: "")
     
@@ -36,7 +37,7 @@ struct ContentView: View {
                     .padding(.horizontal)
                     .padding(.top)
                     
-                    Button(action: {}, label: {
+                    Button(action: { self.show.toggle() }, label: {
                         
                         Image(systemName: "plus").font(.title)
                             .foregroundColor(.white)
@@ -62,6 +63,10 @@ struct ContentView: View {
                         }
                     })
                     .foregroundColor(.white)
+                })
+                .sheet(isPresented: $show, content: {
+                    
+                    SaveView(show: $show)
                 })
             }
         }
@@ -116,6 +121,31 @@ struct cellView : View {
     }
 }
 
+struct SaveView  : View {
+    
+    @State var msg = ""
+    @State var title = ""
+    @Binding var show : Bool
+    
+    var body: some View {
+        
+        VStack {
+            
+            HStack(spacing: 12){
+                
+                Spacer()
+            }
+            
+            Button(action: { self.show.toggle() }, label: {
+                
+                Text("Save")
+            })
+            
+            TextField("Title", text: $title)
+            multiline(txt: $msg)
+        }
+    }
+}
 
 struct type : Identifiable {
     
@@ -131,4 +161,44 @@ class observer: ObservableObject {
     
     @Published var datas = [type]()
     
+}
+
+
+
+struct multiline : UIViewRepresentable {
+    
+    @Binding var txt : String
+    
+    func makeCoordinator() -> multiline.Coordinator {
+
+        return multiline.Coordinator(parent1: self)
+    }
+    
+    
+    func makeUIView(context: Context) -> UITextView {
+        
+        let textView = UITextView()
+        textView.font = .systemFont(ofSize: 18, weight: .heavy)
+        textView.delegate = context.coordinator
+        return textView
+    }
+    
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        
+    }
+    
+    class Coordinator: NSObject, UITextViewDelegate {
+        
+        var parent : multiline
+        
+        init(parent1 : multiline) {
+            
+            parent = parent1
+        }
+        
+        func textViewDidChange(_ textView: UITextView) {
+            
+            self.parent.txt = textView.text
+        }
+    }
 }
