@@ -136,7 +136,13 @@ struct SaveView  : View {
                 Spacer()
             }
             
-            Button(action: { self.show.toggle() }, label: {
+            Button(action: {
+                
+                
+                
+                self.show.toggle()
+                
+            }, label: {
                 
                 Text("Save")
             })
@@ -161,6 +167,12 @@ class observer: ObservableObject {
     
     @Published var datas = [type]()
     
+    
+    func add(title : String, msg : String, id : String) {
+        
+        
+       
+    }
 }
 
 
